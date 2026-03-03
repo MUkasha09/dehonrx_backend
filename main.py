@@ -10,29 +10,33 @@ app = FastAPI()
 interpreter = tflite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
-input_details = interpreter.get_input_details()
-output_details = interpreter.get_output_details()
-
-print("Input details:", input_details)
-print("Output details:", output_details)
-
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     image_bytes = await file.read()
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    image = image.resize((224, 224))  # adjust if needed
 
-    input_data = np.expand_dims(image, axis=0)
-    input_data = np.array(input_data, dtype=np.float32) / 255.0
+    # Resize to correct model size
+    image = image.resize((160, 160))
 
+    # Convert to numpy
+    input_data = np.array(image, dtype=np.float32)
+
+    # Normalize
+    input_data = input_data / 255.0
+
+    # Add batch dimension
+    input_data = np.expand_dims(input_data, axis=0)
+
+    # Run inference
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()
+
     output = interpreter.get_tensor(output_details[0]['index'])
 
-    prediction = np.argmax(output)
+    prediction = int(np.argmax(output))
     confidence = float(np.max(output))
 
     return {
-        "prediction": int(prediction),
+        "prediction": prediction,
         "confidence": confidence
     }
