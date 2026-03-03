@@ -4,6 +4,18 @@ from PIL import Image
 import io
 import tflite_runtime.interpreter as tflite
 
+CLASS_NAMES = [
+    'CORN_Bacterial Leaf Streak',
+    'CORN_Common_rust',
+    'CORN_Gray_leaf_spot',
+    'CORN_Healthy',
+    'CORN_Maize Chlorotic Mottle Virus',
+    'PEANUT_ALTERNARIA LEAF SPOT',
+    'PEANUT_HEALTHY',
+    'PEANUT_LEAF SPOT (EARLY AND LATE)',
+    'PEANUT_ROSETTE'
+]
+
 app = FastAPI()
 
 # Load model once at startup
@@ -34,10 +46,10 @@ async def predict(file: UploadFile = File(...)):
 
     output = interpreter.get_tensor(output_details[0]['index'])
 
-    prediction = int(np.argmax(output))
+    pred_index = int(np.argmax(output))
     confidence = float(np.max(output))
 
     return {
-        "prediction": prediction,
-        "confidence": confidence
+    "disease": CLASS_NAMES[pred_index],
+    "confidence": confidence
     }
