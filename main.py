@@ -2,13 +2,12 @@ from fastapi import FastAPI, File, UploadFile
 import numpy as np
 from PIL import Image
 import io
-import tensorflow as tf
+import tflite_runtime.interpreter as tflite
 
 app = FastAPI()
 
 # Load model once at startup
-
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
+interpreter = tflite.Interpreter(model_path="model.tflite")
 interpreter.allocate_tensors()
 
 input_details = interpreter.get_input_details()
