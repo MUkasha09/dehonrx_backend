@@ -1,9 +1,1 @@
-['CORN_Bacterial Leaf Streak',
- 'CORN_Common_rust',
- 'CORN_Gray_leaf_spot',
- 'CORN_Healthy',
- 'CORN_Maize Chlorotic Mottle Virus',
- 'PEANUT_ALTERNARIA LEAF SPOT',
- 'PEANUT_HEALTHY',
- 'PEANUT_LEAF SPOT (EARLY AND LATE)',
- 'PEANUT_ROSETTE']
+python-3.10.13
